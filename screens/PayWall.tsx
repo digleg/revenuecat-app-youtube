@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -21,6 +22,11 @@ export type NavigationProp = NativeStackNavigationProp<
 const PayWall = () => {
   const navigation = useNavigation<NavigationProp>();
   const { currentOffering } = useRevenueCat();
+  console.log(
+    "🚀 ~ file: PayWall.tsx:25 ~ PayWall ~ currentOffering:",
+    currentOffering
+  );
+
   const handleMonthlyPurchase = async () => {
     if (!currentOffering?.monthly) return;
     const purchaserInfo = await Purchases.purchasePackage(
@@ -31,6 +37,32 @@ const PayWall = () => {
       purchaserInfo.customerInfo.entitlements.active
     );
     if (purchaserInfo.customerInfo.entitlements.active.pro) {
+      navigation.goBack();
+    }
+  };
+
+  const handleAnnualPurchase = async () => {
+    if (!currentOffering?.annual) return;
+    const purchaserInfo = await Purchases.purchasePackage(
+      currentOffering.annual
+    );
+    console.log(
+      "annual SUB PURCHASED >>",
+      purchaserInfo.customerInfo.entitlements.active
+    );
+    if (purchaserInfo.customerInfo.entitlements.active.pro) {
+      navigation.goBack();
+    }
+  };
+
+  const restorePurchases = async () => {
+    const purchaserInfo = await Purchases.restorePurchases();
+    if (purchaserInfo.activeSubscriptions.length > 0) {
+      Alert.alert("Success", "Your purchases have been restored");
+    } else {
+      Alert.alert("Error", "No purchases to restore ");
+    }
+    if (purchaserInfo.entitlements.active.pro) {
       navigation.goBack();
     }
   };
@@ -109,15 +141,44 @@ const PayWall = () => {
         onPress={handleMonthlyPurchase}
         className="items-center px-10 py-5 bg-[#E5962D] mx-10 rounded-full"
       >
-        <Text className="text-white text-md text-center font-bold">
-          FREE trial for 1 week...
+        <Text className="text-white text-md text-center font-bold mb-1">
+          START A{" "}
+          {currentOffering?.monthly?.product.introPrice?.periodNumberOfUnits} x{" "}
+          {currentOffering?.monthly?.product.introPrice?.periodUnit} FREE TRIAL
         </Text>
         <Text className="text-white">
           {currentOffering?.monthly?.product.priceString}/month after
         </Text>
       </TouchableOpacity>
       {/* Annual Subscribe */}
+      {currentOffering?.annual && (
+        <TouchableOpacity
+          onPress={handleAnnualPurchase}
+          className="items-center px-10 py-5 border-2 border-[#E5962D] m-10 rounded-full mt-2 -scroll-mb-80"
+        >
+          <Text
+            className="text-white uppercase text-md text-center font-bold mb-1
+          "
+          >
+            Save{" "}
+            {(
+              (1 -
+                currentOffering.annual?.product.price! /
+                  (currentOffering.monthly?.product.price! * 12)) *
+              100
+            ).toPrecision(2)}
+            % Annually
+          </Text>
+          <Text className="text-white">
+            {currentOffering?.annual?.product.priceString}/year
+          </Text>
+        </TouchableOpacity>
+      )}
+
       {/* Restore Purchases  */}
+      <TouchableOpacity className="m-5" onPress={restorePurchases}>
+        <Text className="text-center text-[#E5962D]">Restore Purchases</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

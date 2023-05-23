@@ -29,3 +29,22 @@ Unsubscribed User ![Unsubscribed User](https://github.com/digleg/revenuecat-app-
 ## Tech Stack
 
 ![image](https://github.com/digleg/revenuecat-app-youtube/assets/24401897/63f5388c-eccb-43c1-b50c-32cc3a1e3918)
+
+## Related Commands
+
+expo
+```bash
+[root]: npm install -g expo-cli 
+expo init revenuecat-app-youtube
+npx expo start
+```
+eas
+```bash
+[root]: npm install -g eas-cli
+```
+tailwind(nativewind)
+```bash
+npm install nativewind
+npx tailwindcss init
+```
+

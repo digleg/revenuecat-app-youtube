@@ -154,7 +154,7 @@ const PayWall = () => {
       {currentOffering?.annual && (
         <TouchableOpacity
           onPress={handleAnnualPurchase}
-          className="items-center px-10 py-5 border-2 border-[#E5962D] m-10 rounded-full mt-2 -scroll-mb-80"
+          className="items-center px-10 py-5 border-2 border-[#E5962D] ml-10 mr-10 rounded-full mt-2 -scroll-mb-80"
         >
           <Text
             className="text-white uppercase text-md text-center font-bold mb-1
